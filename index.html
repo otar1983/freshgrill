@@ -494,7 +494,7 @@ footer p{font-size:12px;color:rgba(255,255,255,0.25);margin-top:0.5rem}
     <a href="#" onclick="scrollBranches();return false">ფილიალები</a>
   </div>
   <div class="nav-right">
-    <button class="nav-admin-btn" onclick="goTo('admin')">⚙ ადმინი</button>
+    <button class="nav-admin-btn" onclick="openAdminLogin()">⚙ ადმინი</button>
     <div id="navGuest">
       <button class="nav-admin-btn" onclick="openAuth()" style="border-color:rgba(255,255,255,0.35);color:rgba(255,255,255,0.85)">👤 შესვლა</button>
     </div>
@@ -992,6 +992,30 @@ footer p{font-size:12px;color:rgba(255,255,255,0.25);margin-top:0.5rem}
   </div>
 </div>
 
+
+<!-- ===== ADMIN LOGIN MODAL ===== -->
+<div class="modal-bg" id="adminLoginModal">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-head">
+      <h2>⚙ ადმინ პანელი</h2>
+      <button class="close-btn" onclick="closeAdminLogin()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="font-size:48px;margin-bottom:0.5rem">🔒</div>
+        <div style="font-size:14px;color:var(--muted)">შეიყვანეთ ადმინის პაროლი</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">პაროლი</label>
+        <input class="form-input" id="adminPassInput" type="password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')checkAdminPass()">
+      </div>
+      <div id="adminPassError" style="display:none;color:#C62828;font-size:12px;margin-bottom:8px">❌ არასწორი პაროლი</div>
+      <button class="btn-primary" style="width:100%;margin-top:0.5rem" onclick="checkAdminPass()">შესვლა →</button>
+      <div style="text-align:center;margin-top:1rem;font-size:12px;color:var(--hint)">მხოლოდ ავტორიზებული პირებისთვის</div>
+    </div>
+  </div>
+</div>
 
 <div class="overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-drawer" id="cartDrawer">
@@ -1647,7 +1671,37 @@ function renderPromos(){
   `).join('');
 }
 
-// ===== CASHBACK CONFIG STATE =====
+// ===== ADMIN AUTH =====
+const ADMIN_PASS = "freshgrill2024"; // ← შეგიძლია შეცვალო
+
+function openAdminLogin(){
+  document.getElementById('adminPassInput').value='';
+  document.getElementById('adminPassError').style.display='none';
+  document.getElementById('adminLoginModal').classList.add('open');
+  setTimeout(()=>document.getElementById('adminPassInput').focus(),100);
+}
+
+function closeAdminLogin(){
+  document.getElementById('adminLoginModal').classList.remove('open');
+}
+
+function checkAdminPass(){
+  const val = document.getElementById('adminPassInput').value;
+  if(val === ADMIN_PASS){
+    closeAdminLogin();
+    goTo('admin');
+  } else {
+    document.getElementById('adminPassError').style.display='block';
+    document.getElementById('adminPassInput').value='';
+    document.getElementById('adminPassInput').focus();
+    // shake animation
+    const inp = document.getElementById('adminPassInput');
+    inp.style.borderColor='#C62828';
+    setTimeout(()=>inp.style.borderColor='',1500);
+  }
+}
+
+
 const CB_CFG = {
   enabled: true,
   minOrder: 10,
@@ -1876,6 +1930,7 @@ document.getElementById('checkoutModal').addEventListener('click',function(e){if
 document.getElementById('successModal').addEventListener('click',function(e){if(e.target===this)closeSuccess();});
 document.getElementById('editItemModal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
 document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeAuth();});
+document.getElementById('adminLoginModal').addEventListener('click',function(e){if(e.target===this)closeAdminLogin();});
 </script>
 </body>
 </html>
